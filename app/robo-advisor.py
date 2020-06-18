@@ -31,7 +31,7 @@ latest_day = dates[0]
 latest_close = tsd[latest_day]["4. close"]
 
 # maximum of all high prices in request
-#get high price in each day
+# get high price in each day
 high_prices = []
 for date in dates:
     high_price = tsd[date]["2. high"]
@@ -39,7 +39,11 @@ for date in dates:
 recent_high = max(high_prices)
 
 # minimum of all low prices in requests
-recent_low = 1
+low_prices = []
+for date in dates:
+    low_price = tsd[date]["3. low"]
+    low_prices.append(float(low_price))
+recent_low = min(low_prices)
 #breakpoint()
 
 
