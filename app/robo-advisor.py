@@ -10,16 +10,29 @@ import requests
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
 
-# Utility checks if a string contains a number > used for validating stock ticker input
-def hasNumbers(input_string):
+# Utility checks if a string contains a number, space, or more than 4 digits --> used for validating stock ticker input
+def has_numbers(input_string):
     return any(char.isdigit() for char in input_string)
+def has_spaces(input_string):
+    return any(char.isspace() for char in input_string)
+def max_four(input_string):
+    numbers = sum(char.isdigit() for char in input_string)
+    words = sum(char.isalpha() for char in input_string)
+    spaces = sum(char.isspace() for char in input_string)
+    others  = len(input_string) - numbers - words - spaces
+    digit_count = numbers + words + spaces + others
+    return any(digit_count > 4 for char in input_string)
 
 #
 # Information Inputs
 #
 while True:
     stock_symbol = input("Please specify which stock you want to view data on: ")
-    if hasNumbers(stock_symbol) == True:
+    if has_numbers(stock_symbol) == True:
+        print("Sorry, looks like you typed an invalid ticker!")
+    elif has_spaces(stock_symbol) == True:
+        print("Sorry, looks like you typed an invalid ticker!")
+    elif max_four(stock_symbol) == True:
         print("Sorry, looks like you typed an invalid ticker!")
     else:
         break
