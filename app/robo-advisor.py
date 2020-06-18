@@ -13,12 +13,10 @@ def to_usd(my_price):
 #
 # Information Inputs
 #
-
-request_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo"
+stock_symbol = "MSFT" #TODO: Make dynamic
+api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
+request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock_symbol}&apikey={api_key}"
 response = requests.get(request_url)
-#print(type(response)) #> <class 'requests.models.Response'>
-#print(response.status_code) #> 200
-#print(response.text) #>string of dictonary
 
 parsed_response = json.loads(response.text)
 
