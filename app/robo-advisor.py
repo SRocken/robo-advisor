@@ -1,7 +1,10 @@
 # app/robo_advisor.py
 
-import requests
+import csv
 import json
+import os
+
+import requests
 
 # Utility function to convert float or integrer to usd formatted string
 def to_usd(my_price):
@@ -30,26 +33,33 @@ dates = list(tsd_keys)
 latest_day = dates[0]
 latest_close = tsd[latest_day]["4. close"]
 
-# maximum of all high prices in request
-# get high price in each day
+# maximum and minimum of all prices in request
 high_prices = []
-for date in dates:
+low_prices = []
+for date in dates: # loop through each date and pull out the high and low price and add them to list
     high_price = tsd[date]["2. high"]
     high_prices.append(float(high_price))
-recent_high = max(high_prices)
-
-# minimum of all low prices in requests
-low_prices = []
-for date in dates:
     low_price = tsd[date]["3. low"]
     low_prices.append(float(low_price))
+recent_high = max(high_prices)
 recent_low = min(low_prices)
-#breakpoint()
 
 
 #
-#Information Outputs
+# Information Outputs
 #
+
+# Write data to CSV for output
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+
+with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
+    writer = csv.DictWriter(csv_file, fieldnames=["city", "name"])
+    writer.writeheader() # uses fieldnames set above
+    writer.writerow({"city": "New York", "name": "Yankees"})
+    writer.writerow({"city": "New York", "name": "Mets"})
+    writer.writerow({"city": "Boston", "name": "Red Sox"})
+    writer.writerow({"city": "New Haven", "name": "Ravens"})
+
 
 print("-------------------------")
 print("SELECTED SYMBOL: XYZ")
@@ -65,5 +75,9 @@ print("-------------------------")
 print("RECOMMENDATION: BUY!")
 print("RECOMMENDATION REASON: TODO")
 print("-------------------------")
+print(f"WRITING DATA TO CSV: {csv_file_path}")
+print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
+
+
