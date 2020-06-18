@@ -4,6 +4,8 @@ import csv
 import json
 import os
 
+from datetime import date
+
 import requests
 
 # Utility function to convert float or integrer to usd formatted string
@@ -16,18 +18,20 @@ def has_numbers(input_string):
 def has_spaces(input_string):
     return any(char.isspace() for char in input_string)
 def max_four(input_string):
-    numbers = sum(char.isdigit() for char in input_string)
-    words = sum(char.isalpha() for char in input_string)
-    spaces = sum(char.isspace() for char in input_string)
-    others  = len(input_string) - numbers - words - spaces
-    digit_count = numbers + words + spaces + others
+    numbers = sum(char.isdigit() for char in input_string) # Counts numbers
+    words = sum(char.isalpha() for char in input_string) # Counts text digits (i.e. "A" or "B")
+    spaces = sum(char.isspace() for char in input_string) # Counts inputted spaces
+    others  = len(input_string) - numbers - words - spaces # Catch-all for anything else (i.e. symbols)
+    digit_count = numbers + words + spaces + others # Adds them all up for validation against max of 4 digits
     return any(digit_count > 4 for char in input_string)
+
+current_date = date.today()
 
 #
 # Information Inputs
 #
 while True:
-    stock_symbol = input("Please specify which stock you want to view data on: ")
+    stock_symbol = input("Please specify which stock symbol you want to view data on: ")
     if has_numbers(stock_symbol) == True:
         print("Sorry, looks like you typed an invalid ticker!")
     elif has_spaces(stock_symbol) == True:
@@ -72,7 +76,7 @@ recent_low = min(low_prices)
 #
 
 # Write data to CSV for output
-csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", f"{stock_symbol.upper()}_{current_date}.csv")
 csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
 
 with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
