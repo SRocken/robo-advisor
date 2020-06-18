@@ -21,9 +21,17 @@ parsed_response = json.loads(response.text)
 
 last_refreshed = parsed_response["Meta Data"]['3. Last Refreshed']
 
-latest_close = parsed_response['Time Series (Daily)']["2020-06-17"]["4. close"]
+# Creating variable to pull Time Series Daily respones > tsd > each date is a key with price information as values
+# Then created list of those keys (already in chrono order) to pull the first in the list
+# Finally pulling out latest date from that series to be used for latest close/prices
+tsd = parsed_response['Time Series (Daily)']
+tsd_keys = tsd.keys()
+dates = list(tsd_keys)
+latest_day = dates[0]
+latest_close = tsd[latest_day]["4. close"]
 
-
+recent_high = 1
+recent_low = 1
 #breakpoint()
 
 
@@ -39,8 +47,8 @@ print("REQUESTED AT: 2018-02-20 02:00pm") #Use datetime module to auto intput th
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
-print("RECENT HIGH: $101,000.00")
-print("RECENT LOW: $99,000.00")
+print(f"RECENT HIGH: {recent_high}")
+print(f"RECENT LOW: {recent_low}")
 print("-------------------------")
 print("RECOMMENDATION: BUY!")
 print("RECOMMENDATION REASON: TODO")
