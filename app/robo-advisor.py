@@ -10,10 +10,21 @@ import requests
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
 
+# Utility checks if a string contains a number > used for validating stock ticker input
+def hasNumbers(input_string):
+    return any(char.isdigit() for char in input_string)
+
 #
 # Information Inputs
 #
-stock_symbol = "MSFT" #TODO: Make dynamic
+while True:
+    stock_symbol = input("Please specify which stock you want to view data on: ")
+    if hasNumbers(stock_symbol) == True:
+        print("Sorry, looks like you typed an invalid ticker!")
+    else:
+        break
+
+
 api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
 request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock_symbol}&apikey={api_key}"
 response = requests.get(request_url)
@@ -68,7 +79,7 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
 
 
 print("-------------------------")
-print("SELECTED SYMBOL: XYZ")
+print(f"SELECTED SYMBOL: {stock_symbol.upper()}") # Pulls user input and ensures its in all caps
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
 print("REQUESTED AT: 2018-02-20 02:00pm") #Use datetime module to auto intput this
