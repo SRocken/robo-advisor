@@ -4,9 +4,11 @@ import csv
 import json
 import os
 
-from datetime import date
-
 import requests
+from datetime import datetime, date
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Utility function to convert float or integrer to usd formatted string
 def to_usd(my_price):
@@ -26,7 +28,7 @@ def max_four(input_string):
     return any(digit_count > 4 for char in input_string)
 
 current_date = date.today()
-
+current_datetime = datetime.today()
 #
 # Information Inputs
 #
@@ -41,8 +43,8 @@ while True:
     else:
         break
 
+api_key = os.environ.get("ALPHAVANTAGE_API_KEY")
 
-api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
 request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock_symbol}&apikey={api_key}"
 response = requests.get(request_url)
 
@@ -70,6 +72,13 @@ for date in dates: # loop through each date and pull out the high and low price 
 recent_high = max(high_prices)
 recent_low = min(low_prices)
 
+# Recommendation
+if latest_close < str(recent_high-(recent_high*.20)):
+   recommendation = "Buy"
+   recommendation_reason = "Latest close price is 20% less than recent high"
+else:
+    recommendation = "Do not buy"
+    recommendation_reason = "Latest close price is near recent high"
 
 #
 # Information Outputs
@@ -99,15 +108,15 @@ print("-------------------------")
 print(f"SELECTED SYMBOL: {stock_symbol.upper()}") # Pulls user input and ensures its in all caps
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
-print("REQUESTED AT: 2018-02-20 02:00pm") #Use datetime module to auto intput this
+print(f"REQUESTED AT: {current_datetime}") #Use datetime module to auto intput this
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print(f"RECENT HIGH: {to_usd(float(recent_high))}")
 print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
-print("RECOMMENDATION: BUY!")
-print("RECOMMENDATION REASON: TODO")
+print(f"RECOMMENDATION: {recommendation}")
+print(f"RECOMMENDATION REASON: {recommendation_reason}")
 print("-------------------------")
 print(f"WRITING DATA TO CSV: {csv_file_path}")
 print("-------------------------")
